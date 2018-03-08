@@ -1,0 +1,233 @@
+---
+title: "Instalação R e appraiseR"
+subtitle: "para uso na área de avaliação de imóveis"
+author: "Luiz Fernando Palin Droubi"
+date: "`r format(Sys.Date(), '%d/%m/%Y')`"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    self_contained: TRUE
+    chakra: libs/remark-latest.min.js
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    css: ["default", "estilo.css"]
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(ggplot2)
+library(ggthemes)
+theme_set(theme_few())
+```
+
+background-image: url(https://www.r-project.org/logo/Rlogo.svg)
+
+???
+
+Image credit: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Sharingan_triple.svg)
+
+---
+class: inverse, center, middle
+
+# Instalação do R
+
+---
+
+# Download
+
+* Efetue o download do **R** de um [repositório oficial](https://cran-r.c3sl.ufpr.br/).
+
+--
+
+* Efetue a instalação padrão do **R**. 
+
+--
+
+* É recomendável a utilização do [RStudio IDE](https://www.rstudio.com/products/rstudio/), um ambiente de desenvolvimento integrado desenvolvido especificamente para o **R**.
+
+--
+
+* Efetue o download da versão *free* [RStudio](https://www.rstudio.com/products/rstudio/download/).
+
+--
+
+* Efetue a instalação básica do **RStudio**.
+
+--
+
+* É recomendável a instalação do [MikTeX](https://miktex.org/) no Windows (ou TeXLive no Linux), para confecção de relatórios com o **rmarkdown**.
+
+---
+
+* Após a instalação correta do **R**, para instalar o `appraiseR`, inicialmente precisamos da instalação do pacote `devtools`.
+
+--
+
+* Para instalação do pacote `devtools` no **R**, basta abrir diretamente o o **RStudio** (preferencialmente), ou diretamente o **R** e digitar a seguinte linha de código no console:
+
+```{r, eval=FALSE}
+install.packages("devtools")
+```
+
+--
+
+* Instalado corretamente o `devtools`, a instalação do `appraiseR` pode ser feita como abaixo:
+
+```{r, eval = FALSE}
+devtools::install_github("lfpdroubi/appraiseR")
+```
+
+---
+class: inverse, center, middle
+
+# Testes
+
+---
+
+Uma vez instalado o pacote `appraiseR`, podem ser efetuados os seguintes testes:
+
+--
+
+Carregar o pacote:
+
+```{r}
+library(appraiseR)
+```
+
+--
+
+Mostrar conjunto de dados de exemplo `centro_2015`:
+
+```{r}
+centro_2015@data
+```
+
+---
+class: inverse, center, middle
+
+# Encontrando modelos
+
+---
+
+Com o pacote funcionando, pode-se encontrar modelos com a função `bestfit`, como abaixo:
+
+```{r}
+data <- as.data.frame(centro_2015@data)
+best_fit <- bestfit(valor~., data = data)
+best_fit
+```
+
+--
+***
+**Transformações:**
+.small[
+* rsqr = $1/Y^2$; 
+* rec = $1/Y$; 
+* rsqrt = $1/\sqrt{Y}$; 
+* identity = $Y$; 
+* sqrt = $\sqrt{Y}$; 
+* sqr = $Y^2$
+]
+---
+class: inverse, center, middle
+
+# Resumo do modelo escolhido
+
+---
+
+.small[
+```{r}
+summary(best_fit, fit = 1)
+```
+]
+
+---
+
+.small[
+```{r}
+summary(best_fit, fit = 2)
+```
+]
+
+---
+class: inverse, center, middle
+
+# Previsões
+
+---
+
+Uma vez encontrado o modelo, podem ser feitas previsões com a utilização do método `predict.bestfit`:
+
+```{r}
+predict(best_fit, fit = 1, interval = "confidence", level = 0.80)
+```
+
+--
+***
+
+**Siglas:**
+.small[
+* fit = estimativa central;
+* lwr = limite inferior do intervalo;
+* upr = limite superior do intervalo;
+* AMP = amplitude do intervalo; 
+* G.P. = Grau de Precisão segundo a NBR 14.653-02, item 9.2.3;
+* C.A.I. e C.A.S = Limites inferior e superior do Campo de Arbítrio;
+* L.I. e L.S. = Limites inferior e superior segundo a NBR14.653-02, item A.10.
+]
+---
+class: inverse, center, middle
+
+# Poder de Predição
+
+---
+```{r, fig.show = "hold", fig.height=5, dev='svg', out.width="50%"}
+power_plot(best_fit, fit = 1)
+power_plot(best_fit, fit = 2)
+```
+
+---
+class: inverse, center, middle
+
+# Gráfico das variáveis do modelo
+
+---
+
+```{r, warning=FALSE, dev='svg', out.width="90%", fig.align='center', fig.height=4}
+plotmod(best_fit, fit = 1, interval = "confidence", level = 0.80)
+```
+
+---
+class: inverse, center, middle
+
+# Interface Gráfica
+
+---
+background-image: url(images/interface.png)
+background-size: content
+
+Em fase de testes
+---
+background-image: url(images/interface2.png)
+background-size: content
+
+---
+background-image: url(images/interface3.png)
+background-size: content
+
+---
+
+Será possível através da interface gráfica:
+
+* Upload de dados de planilha excel;
+* Filtrar modelos de acordo com as transformações desejadas;
+* Fácil retirada de variáveis do modelo;
+* Escolha de intervalos de confiança ou predição;
+* Nível de confiança;
+* Relatório de avaliação;
+
+---
+
+Esta apresentação foi elaborada no próprio **R** com o auxílio do pacote [xaringan](https://github.com/yihui/xaringan).

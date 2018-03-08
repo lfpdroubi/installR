@@ -1,0 +1,9 @@
+.remark-slide-content {
+  background-size: contain;
+}
+.large { font-size: 130% }
+.small { font-size: 70% }
+.tiny { font-size: 40%}
+.remark-code, .remark-inline-code { font-family: 'Source Code Pro', 'Lucida Console', Monaco, monospace;
+                                    font-size: 75%;
+                                  }
